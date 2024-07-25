@@ -10,9 +10,12 @@
   "description": "",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.5",
     "hardhat": "^2.22.6"
   },
   "dependencies": {
-    "ethr-did-registry": "^1.2.0"
+    "ethr-did-registry": "^1.2.0",
+    "ethr-did-resolver": "^10.1.9",
+    "secp256r1": "^0.0.3"
   }
 }

@@ -25,10 +25,28 @@ const generateP256Wallet = function () {
     const address = "0x" + keccak256(pubKey.slice(1)).slice(-40);
 
     return {
-        pubKey: "0x" + pubKey.toString("hex"),
+        pubKey: {
+            value: "0x" + pubKey.toString("hex"),
+            x: "0x" + pubKey.slice(0, 32).toString("hex"),
+            y: "0x" + pubKey.slice(32, 64).toString("hex"),
+        },
         address,
-        sign: (msg) => secp256r1.sign(msg, privKey),
+        sign: (msg) => {
+            if (Buffer.isBuffer(msg)) return _sign(msg, privKey);
+            if (/^0x/.test(msg)) return _sign(Buffer.from(msg.slice(2), "hex"), privKey);
+
+            return _sign(Buffer.from(msg), privKey);
+        },
     }
 }
+
+const _sign = function (msg, privKey) {
+    const { signature } = secp256r1.sign(msg, privKey);
+    return {
+        signature,
+        r: "0x" + signature.slice(0, 32).toString("hex"),
+        s: "0x" + signature.slice(32, 64).toString("hex"),
+    }
+};
 
 module.exports = { deployContract, generateP256Wallet };

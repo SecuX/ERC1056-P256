@@ -23,13 +23,16 @@ describe("ERC1056_P256", async function () {
         );
     });
 
-    describe("Delegate", function () {
+    describe("secp256k1 Signer", function () {
+        beforeEach(async function () {
+            this.delegateType = "veriKey";
+            this.delegateTypeBytes = stringToBytes32(this.delegateType);
+            this.delegate = this.p256Signer.address;
+            this.exp = 86400;
+        });
+
         it("can add delegate", async function () {
-            const delegateType = "veriKey";
-            const delegateTypeBytes = stringToBytes32(delegateType);
-            const delegate = this.p256Signer.address;
-            const exp = 86400;
-            const hash = await this.ethrDID.createAddDelegateHash(delegateType, delegate, exp);
+            const hash = await this.ethrDID.createAddDelegateHash(this.delegateType, this.delegate, this.exp);
             const signature = this.addr1Signer.sign(hash);
 
             await this.erc1056_p256.connect(this.addr1).addDelegateSigned(
@@ -37,16 +40,55 @@ describe("ERC1056_P256", async function () {
                 signature.v,
                 signature.r,
                 signature.s,
-                delegateTypeBytes,
-                delegate,
-                exp,
+                this.delegateTypeBytes,
+                this.delegate,
+                this.exp,
             );
 
             await expect(
                 this.erc1056_p256.validDelegate(
                     this.addr1.address,
-                    delegateTypeBytes,
-                    delegate,
+                    this.delegateTypeBytes,
+                    this.delegate,
+                )
+            ).to.eventually.true;
+        });
+    });
+
+    describe("P256 Signer", function () {
+        beforeEach(async function () {
+            this.delegateType = "veriKey";
+            this.delegateTypeBytes = stringToBytes32(this.delegateType);
+            this.delegate = this.p256Signer.address;
+            this.exp = 86400;
+
+            await this.erc1056_p256.connect(this.addr1).changeOwner(
+                this.addr1.address,
+                this.p256Signer.address,
+            );
+        });
+
+        it("can add delegate", async function () {
+            const hash = await this.ethrDID.createAddDelegateHash(this.delegateType, this.delegate, this.exp);
+            const signature = this.p256Signer.sign(hash);
+
+            await this.erc1056_p256.connect(this.addr1).addDelegateSigned(
+                this.addr1.address,
+                signature.r,
+                signature.s,
+                this.p256Signer.pubKey.x,
+                this.p256Signer.pubKey.y,
+                this.delegateTypeBytes,
+                this.delegate,
+                this.exp,
+                {}
+            );
+
+            await expect(
+                this.erc1056_p256.validDelegate(
+                    this.addr1.address,
+                    this.delegateTypeBytes,
+                    this.delegate,
                 )
             ).to.eventually.true;
         });

@@ -9,16 +9,27 @@ contract ERC1056P256 is EthereumDIDRegistry {
 
     function P256VERIFY(bytes32 hash, bytes32 sigR, bytes32 sigS, bytes32 x, bytes32 y) internal returns(bool) {
         bytes memory input = abi.encodePacked(hash, sigR, sigS, x, y);
-        (bool success, bytes memory output) = P256.staticcall(input);
-        require(success, "p256 not supported");
+        (bool __, bytes memory output) = P256.staticcall(input);
+
+        // the precompiled contract do not return false value
+        if (output.length == 0) return false;
+
         return abi.decode(output, (bool));
+    }
+
+    function publickeyToAddress(bytes memory publickey) internal returns(address addr) {
+        bytes32 hash = keccak256(publickey);
+        assembly {
+            mstore(0, hash)
+            addr := mload(0)
+        }
     }
 
     function checkSignature(address identity, bytes32 sigR, bytes32 sigS, bytes32 x, bytes32 y, bytes32 hash) internal returns(address) {
         bool isValidSignature = P256VERIFY(hash, sigR, sigS, x, y);
         require(isValidSignature, "bad_signature");
 
-        address signer = address(bytes20(keccak256(abi.encodePacked(x, y))));
+        address signer = publickeyToAddress(abi.encodePacked(x, y));
         require(signer == identityOwner(identity), "bad_signature");
         nonce[signer]++;
         return signer;

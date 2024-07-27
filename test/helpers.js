@@ -27,8 +27,8 @@ const generateP256Wallet = function () {
     return {
         pubKey: {
             value: "0x" + pubKey.toString("hex"),
-            x: "0x" + pubKey.slice(0, 32).toString("hex"),
-            y: "0x" + pubKey.slice(32, 64).toString("hex"),
+            x: "0x" + pubKey.slice(1, 33).toString("hex"),
+            y: "0x" + pubKey.slice(33, 65).toString("hex"),
         },
         address,
         sign: (msg) => {

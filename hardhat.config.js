@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomicfoundation/hardhat-ignition-ethers");
+require("@nomicfoundation/hardhat-verify");
 dotenv.config();
 
 const accounts = [
@@ -27,5 +28,20 @@ module.exports = {
             url: "https://rpc.ankr.com/polygon_amoy",
             accounts
         },
+    },
+    etherscan: {
+        apiKey: {
+            polygonAmoy: process.env.POLYGONSCAN_API_KEY,
+        },
+        customChains: [
+            {
+                network: "polygonAmoy",
+                chainId: 80002,
+                urls: {
+                    apiURL: "https://api-amoy.polygonscan.com/api",
+                    browserURL: "https://amoy.polygonscan.com"
+                },
+            }
+        ]
     }
 };

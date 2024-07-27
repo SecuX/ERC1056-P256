@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "deploy": "npx hardhat ignition deploy ignition/modules/deploy.js --network amoy --verify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

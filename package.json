@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "deploy": "npx hardhat ignition deploy ignition/modules/deploy.js --network amoy --verify",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "changeOwner": "npx hardhat ignition deploy ignition/modules/changeOwner.js --network amoy",
+    "test": "npx hardhat test"
   },
   "author": "",
   "license": "ISC",

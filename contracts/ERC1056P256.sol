@@ -30,7 +30,7 @@ contract ERC1056P256 is EthereumDIDRegistry {
         require(isValidSignature, "bad_signature");
 
         address signer = publickeyToAddress(abi.encodePacked(x, y));
-        require(signer == identityOwner(identity), "bad_signature");
+        require(signer == identityOwner(identity), "bad_actor");
         nonce[signer]++;
         return signer;
     }

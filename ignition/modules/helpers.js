@@ -1,6 +1,15 @@
 const secp256r1 = require("secp256r1");
 const { keccak256 } = require("ethers");
 
+const _sign = function (msg, privKey) {
+    const { signature } = secp256r1.sign(msg, privKey);
+    return {
+        signature,
+        r: "0x" + signature.slice(0, 32).toString("hex"),
+        s: "0x" + signature.slice(32, 64).toString("hex"),
+    }
+};
+
 const generateP256Wallet = function (privKey) {
     if (!Buffer.isBuffer(privKey)) {
         if (/^0x/.test(privKey)) privKey = privKey.slice(2);

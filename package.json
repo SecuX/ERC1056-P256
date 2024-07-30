@@ -5,6 +5,7 @@
   "scripts": {
     "deploy": "npx hardhat ignition deploy ignition/modules/deploy.js --network amoy --verify",
     "changeOwner": "npx hardhat ignition deploy ignition/modules/changeOwner.js --network amoy",
+    "addDelegateSigned": "npx hardhat ignition deploy ignition/modules/addDelegateSigned.js --network amoy",
     "test": "npx hardhat test"
   },
   "author": "",

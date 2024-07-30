@@ -68,6 +68,21 @@ describe("ERC1056_P256", async function () {
             );
         });
 
+        it("can chage owner", async function () {
+            const hash = await this.ethrDID.createChangeOwnerHash(this.delegate);
+            const signature = this.p256Signer.sign(hash);
+
+            await this.erc1056_p256.connect(this.addr1).changeOwnerSigned(
+                this.addr1.address,
+                signature.r,
+                signature.s,
+                this.p256Signer.pubKey.x,
+                this.p256Signer.pubKey.y,
+                this.delegate,
+                {}
+            );
+        });
+
         it("can add delegate", async function () {
             const hash = await this.ethrDID.createAddDelegateHash(this.delegateType, this.delegate, this.exp);
             const signature = this.p256Signer.sign(hash);

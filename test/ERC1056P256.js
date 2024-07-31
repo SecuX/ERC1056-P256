@@ -60,12 +60,48 @@ describe("ERC1056_P256", async function () {
             this.delegateType = "veriKey";
             this.delegateTypeBytes = stringToBytes32(this.delegateType);
             this.delegate = this.p256Signer.address;
+            this.attrName = "did/pub/secp256r1/veriKey";
+            this.attrValue = this.p256Signer.pubKey.value;
             this.exp = 86400;
 
             await this.erc1056_p256.connect(this.addr1).changeOwner(
                 this.addr1.address,
                 this.p256Signer.address,
             );
+
+            this.addDelegate = async () => {
+                const hash = await this.ethrDID.createAddDelegateHash(this.delegateType, this.delegate, this.exp);
+                const signature = this.p256Signer.sign(hash);
+
+                await this.erc1056_p256.connect(this.addr1).addDelegateSigned(
+                    this.addr1.address,
+                    signature.r,
+                    signature.s,
+                    this.p256Signer.pubKey.x,
+                    this.p256Signer.pubKey.y,
+                    this.delegateTypeBytes,
+                    this.delegate,
+                    this.exp,
+                    {}
+                );
+            };
+
+            this.setAttribute = async () => {
+                const hash = await this.ethrDID.createSetAttributeHash(this.attrName, this.attrValue, this.exp);
+                const signature = this.p256Signer.sign(hash);
+
+                await this.erc1056_p256.connect(this.addr1).setAttributeSigned(
+                    this.addr1.address,
+                    signature.r,
+                    signature.s,
+                    this.p256Signer.pubKey.x,
+                    this.p256Signer.pubKey.y,
+                    stringToBytes32(this.attrName),
+                    this.attrValue,
+                    this.exp,
+                    {}
+                );
+            };
         });
 
         it("can chage owner", async function () {
@@ -84,10 +120,24 @@ describe("ERC1056_P256", async function () {
         });
 
         it("can add delegate", async function () {
-            const hash = await this.ethrDID.createAddDelegateHash(this.delegateType, this.delegate, this.exp);
+            await this.addDelegate();
+
+            await expect(
+                this.erc1056_p256.validDelegate(
+                    this.addr1.address,
+                    this.delegateTypeBytes,
+                    this.delegate,
+                )
+            ).to.eventually.true;
+        });
+
+        it("can revoke delegate", async function () {
+            await this.addDelegate();
+
+            const hash = await this.ethrDID.createRevokeDelegateHash(this.delegateType, this.delegate);
             const signature = this.p256Signer.sign(hash);
 
-            await this.erc1056_p256.connect(this.addr1).addDelegateSigned(
+            await this.erc1056_p256.connect(this.addr1).revokeDelegateSigned(
                 this.addr1.address,
                 signature.r,
                 signature.s,
@@ -95,7 +145,6 @@ describe("ERC1056_P256", async function () {
                 this.p256Signer.pubKey.y,
                 this.delegateTypeBytes,
                 this.delegate,
-                this.exp,
                 {}
             );
 
@@ -105,7 +154,29 @@ describe("ERC1056_P256", async function () {
                     this.delegateTypeBytes,
                     this.delegate,
                 )
-            ).to.eventually.true;
+            ).to.eventually.false;
+        });
+
+        it("can set attribute", async function () {
+            await this.setAttribute();
+        });
+
+        it("can revoke attribute", async function () {
+            await this.setAttribute();
+
+            const hash = await this.ethrDID.createRevokeAttributeHash(this.attrName, this.attrValue);
+            const signature = this.p256Signer.sign(hash);
+
+            await this.erc1056_p256.connect(this.addr1).revokeAttributeSigned(
+                this.addr1.address,
+                signature.r,
+                signature.s,
+                this.p256Signer.pubKey.x,
+                this.p256Signer.pubKey.y,
+                stringToBytes32(this.attrName),
+                this.attrValue,
+                {}
+            );
         });
     });
 });

@@ -4,8 +4,12 @@
   "main": "index.js",
   "scripts": {
     "deploy": "npx hardhat ignition deploy ignition/modules/deploy.js --network amoy --verify",
-    "changeOwner": "npx hardhat ignition deploy ignition/modules/changeOwner.js --network amoy",
-    "addDelegateSigned": "npx hardhat ignition deploy ignition/modules/addDelegateSigned.js --network amoy",
+    "changeOwner": "npx hardhat run ignition/modules/changeOwner.js --network amoy",
+    "changeOwnerSigned": "npx hardhat run ignition/modules/changeOwnerSigned.js --network amoy",
+    "addDelegateSigned": "npx hardhat run ignition/modules/addDelegateSigned.js --network amoy",
+    "revokeDelegateSigned": "npx hardhat run ignition/modules/revokeDelegateSigned.js --network amoy",
+    "setAttributeSigned": "npx hardhat run ignition/modules/setAttributeSigned.js --network amoy",
+    "revokeAttributeSigned": "npx hardhat run ignition/modules/revokeAttributeSigned.js --network amoy",
     "test": "npx hardhat test"
   },
   "author": "",

@@ -17,12 +17,11 @@ const { p256Wallet } = require("./helpers.js");
     const delegateType = "veriKey";
     const delegateTypeBytes = stringToBytes32(delegateType);
     const delegate = p256Wallet.address;
-    const exp = 86400;
-    const hash = await ethrDID.createAddDelegateHash(delegateType, delegate, exp);
+    const hash = await ethrDID.createRevokeDelegateHash(delegateType, delegate);
     const signature = p256Wallet.sign(hash);
 
     const erc1056 = await hre.ethers.getContractAt("ERC1056P256", process.env.CONTRACT_ADDRESS);
-    const result = await erc1056.addDelegateSigned(
+    const result = await erc1056.revokeDelegateSigned(
         issuer.address,
         signature.r,
         signature.s,
@@ -30,7 +29,6 @@ const { p256Wallet } = require("./helpers.js");
         p256Wallet.pubKey.y,
         delegateTypeBytes,
         delegate,
-        exp,
         {}
     );
     console.log(result.hash);

@@ -10,15 +10,18 @@
     "revokeDelegateSigned": "npx hardhat run ignition/modules/revokeDelegateSigned.js --network amoy",
     "setAttributeSigned": "npx hardhat run ignition/modules/setAttributeSigned.js --network amoy",
     "revokeAttributeSigned": "npx hardhat run ignition/modules/revokeAttributeSigned.js --network amoy",
-    "test": "npx hardhat test"
+    "test": "npx hardhat test",
+    "test:p256": "mocha ./p256-test/*.test.js -R mochawesome"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "axios": "^1.7.3",
     "dotenv": "^16.4.5",
-    "hardhat": "^2.22.6"
+    "hardhat": "^2.22.6",
+    "mochawesome": "^7.1.3"
   },
   "dependencies": {
     "ethr-did-registry": "^1.2.0",
